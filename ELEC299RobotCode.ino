@@ -12,6 +12,8 @@ Servo panServo;
 Servo tiltServo;
 Servo gripServo;
 
+bool leftGot, rightGot, midGot;
+
 void setup() {
   
   
@@ -25,30 +27,20 @@ void setup() {
   gripServo.attach(grip); 
   gripServo.write(0);
   
+  
+  leftGot = false;
+  rightGot = false;
+  midGot = false;
   delay(1000);
-  grabBall();
+  
   
 }
 
 void loop() {
-  int ch = myCereal.receive(200);
-  switch(ch)
-  {
-      case 48:
-        Serial.println("Recieved a Zero");
-        break;
-      case 49:
-        Serial.println("Received a One");
-        break;
-      case 50:
-        Serial.println("Recieved a Two");
-        break;
-      default:
-        Serial.print("Error: this was recieved: ");
-        Serial.println(ch);
-        Serial.println((char)ch);
-  }
-  delay(500);
+  
+  
+  
+  
 }
 
 void center()
@@ -100,6 +92,83 @@ void driveAndStop()
    digitalWrite(leftDir,HIGH); 
   }
   else if (right<rlth && left<llth)
+  {
+   analogWrite(rightSpeed,0);
+   analogWrite(leftSpeed,0);
+   return;
+  }
+  else
+  {
+    analogWrite(leftSpeed,110);
+    analogWrite(rightSpeed,100);
+  }
+  delay(20);
+    
+  }
+}
+
+void turnLeft(int times)
+{
+  for(int i = 0;i<times;i++)
+  {
+    digitalWrite(leftDir, LOW);
+    digitalWrite(rightDir, HIGH);
+    analogWrite(leftSpeed, 100);
+    analogWrite(rightSpeed, 100);
+    delay(50);
+    while(analogRead(MPin) > mlth)
+    {
+      //yoloswag
+    }
+    analogWrite(leftSpeed,0);
+    analogWrite(rightSpeed,0);
+    delay(50);
+  }
+}
+
+void turnRight(int times)
+{
+  for(int i = 0;i<times;i++)
+  {
+    digitalWrite(leftDir, HIGH);
+    digitalWrite(rightDir, LOW);
+    analogWrite(leftSpeed, 100);
+    analogWrite(rightSpeed, 100);
+    delay(50);
+    while(analogRead(MPin) > mlth)
+    {
+      //yoloswag
+    }
+    analogWrite(leftSpeed,0);
+    analogWrite(rightSpeed,0);
+    delay(50);
+  }
+}
+
+void driveAndSense()
+{
+  int right, mid, left;
+  digitalWrite(rightDir,HIGH);
+  digitalWrite(leftDir,HIGH);
+  
+  
+  while(true)
+  {
+     if (right<rlth)
+  {
+   analogWrite(rightSpeed,80);
+   digitalWrite(rightDir,HIGH);
+   analogWrite(leftSpeed,100);
+   digitalWrite(leftDir,HIGH); 
+  }
+  else if (left<llth)
+  {
+   analogWrite(rightSpeed,100);
+   digitalWrite(rightDir,HIGH);
+   analogWrite(leftSpeed,80);
+   digitalWrite(leftDir,HIGH); 
+  }
+  else if (analogRead(IRPin) < IRThresh)
   {
    analogWrite(rightSpeed,0);
    analogWrite(leftSpeed,0);

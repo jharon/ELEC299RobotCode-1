@@ -20,4 +20,6 @@
 #define rightDir 6
 #define rightSpeed 7
 
-
+//IR Thresh Crap
+#define IRPin A3
+#define IRDistThresh
